@@ -5,6 +5,10 @@ import connectdb from './database/connection.js';
 //create express instance
 const app = express();
 
+// parses JSON bodies
+// accessible through req.body 
+app.use(express.json());
+
 //enable cors requests
 app.use(cors());
 
