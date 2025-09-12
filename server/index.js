@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors'; 
-import dotenv from 'dotenv';
 import connectdb from './database/connection.js';
 import registerRoute from './routes/registerRoute.js';
 import authRoute from './routes/authRoute.js';
+import workoutRoute from './routes/workoutRoute.js';
 
 //create express instance
 const app = express();
@@ -26,6 +26,7 @@ await connectdb();
 // routes
 app.use("/api/register", registerRoute);
 app.use("/api/auth", authRoute);
+app.use("/workouts", workoutRoute);
 
 // start server and listen on port
 app.listen(port, () => {
