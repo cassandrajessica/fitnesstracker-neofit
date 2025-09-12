@@ -6,8 +6,6 @@ const router = express.Router();
 // register new users
 router.post("/", async (req, res) => {
     try {
-        // this is for debugging purposes - remove later 
-        console.log("request body: ", req.body);
         // check if email already exists
         const existingEmail = await User.findOne({ email: req.body.email });
 
