@@ -6,9 +6,14 @@ const SALT_WORK_FACTOR = 10;
 
 const userSchema = new Schema({
   name: {
-    first: String,
-    last: String,
-    required: true,
+    first: {
+      type: String,
+      required: true,
+    },
+    last: {
+      type: String,
+      required: true,
+    }
   },
   username: {
     type: String,
@@ -26,48 +31,44 @@ const userSchema = new Schema({
   },
   createdAt: {
     type: Date,
+    default: Date.now,
   },
 });
 
-// hash password with bcrypt before saving to db
+// pre save middleware to automatically hash password before saving
 userSchema.pre("save", function (next) {
+  // refers to user being saved
   const user = this;
 
   //hashes password only if it is new or has been modified
+  // prevents unnecessary rehashing
   if (!user.isModified("password")) {
-    return next();
+    return next(); //  if no modification, skip and continue with save operation
   }
 
-  // generate a salt
+  // generate a salt - adds randomness for security 
   bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
+    // handle any errors during salt generation
     if (err) {
-      return next(err);
+      return next(err); // if error, stop save operation
     }
 
     // hash password with salt
     bcrypt.hash(user.password, salt, function (err, hash) {
+      // handle any errors during hashing
       if (err) {
-        return next(err);
+        return next(err); // if error, stop save operation
       }
 
-      // override the cleartext pass with the hashed pass
+      // replace plaintext password with hashed password
       user.password = hash;
+
+      // continue with save operation and save password
       next();
     });
   });
 });
 
-// custom method to compare if password at login is correct
-userSchema.methods.comparePassword = function (candidatePassword, cb) {
-  bcrypt.compare(candidatePassword, this.password, function (err, isMatch) {
-    // if error occurs during comparison, return the error
-    if (err) {
-      return cb(err);
-    }
-
-    // upon succesful comparison return back true or false
-    cb(null, isMatch);
-  });
-};
-
 const User = mongoose.model("User", userSchema);
+
+export default User;
