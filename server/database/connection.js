@@ -9,8 +9,6 @@ async function connectdb() {
         console.log("Succesfully connected to MongoDB");
     } catch(error) {
         console.log(error, "Trouble connecting to Mongo");
-    } finally {
-        await mongoose.disconnect();
     }
 }
 
